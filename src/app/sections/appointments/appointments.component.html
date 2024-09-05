@@ -1,0 +1,87 @@
+<!-- src/app/appointments/appointments.component.html -->
+
+<div class="appointments-container">
+	<!-- Cargando Spinner -->
+	<mat-spinner *ngIf="_appointmentsFacade.loading$ | async"
+		class="loading-spinner"></mat-spinner>
+
+	<!-- Lista de Citas -->
+	<div *ngIf="_appointmentsFacade.appointments$ | async as appointments">
+		<h2 class="appointments-title d-flex">
+			Appointments
+			<button mat-button (click)="loadData()">
+				<mat-icon>refresh</mat-icon>
+			</button>
+		</h2>
+
+		<!-- Lista de citas -->
+		<div>
+			<div *ngFor="let appointment of appointments">
+				<div class="appointment-info">
+					<span class="appointment-client">
+						{{ appointment.user.name }}
+					</span>
+					<span class="appointment-service">
+						{{ appointment.service.name }}
+					</span>
+					<span class="appointment-date">
+						{{ appointment.appointment_date | date:'short' }}
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Formulario para Añadir una Nueva Cita -->
+	<div class="add-appointment-form">
+		<h3 class="form-title">Add New Appointment</h3>
+		<form [formGroup]="appointmentForm"
+			(ngSubmit)="onSubmit()">
+			<mat-form-field appearance="fill">
+				<mat-label>Cliente</mat-label>
+				<mat-select formControlName="user_id">
+					<mat-option *ngFor="let client of clients"
+						[value]="client.id">
+						{{ client.name }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+
+			<mat-form-field appearance="fill">
+				<mat-label>Barber</mat-label>
+				<mat-select formControlName="barber_id">
+					<mat-option *ngFor="let barber of barbers"
+						[value]="barber.id">
+						{{ barber.name }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+
+			<mat-form-field appearance="fill">
+				<mat-label>Service</mat-label>
+				<mat-select formControlName="service_id">
+					<mat-option *ngFor="let service of services"
+						[value]="service.id">
+						{{ service.name }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+
+			<mat-form-field appearance="fill">
+				<mat-label>Appointment Date</mat-label>
+				<input matInput
+					formControlName="appointment_date"
+					type="datetime-local">
+			</mat-form-field>
+
+			<div>
+				<button [disabled]="appointmentForm.invalid"
+					mat-raised-button
+					color="primary"
+					type="submit">
+					Create Appointment
+				</button>
+			</div>
+		</form>
+	</div>
+</div>

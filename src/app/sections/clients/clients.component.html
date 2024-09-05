@@ -1,0 +1,71 @@
+<!-- src/app/clients/clients.component.html -->
+
+<div class="clients-container">
+	<!-- Lista de Clientes -->
+	<div>
+		<h2 class="clients-title">Clientes</h2>
+
+		<!-- Lista de Clientes -->
+		<mat-list>
+			<mat-list-item *ngFor="let client of clients; let i = index"
+				class="client-item">
+				<div class="client-info">
+                    <span>{{ client.id }}</span>
+                    <span>-</span>
+					<span class="client-client">
+						{{ client.name }}
+					</span>
+                    <span>-</span>
+					<span class="client-service">
+						{{ client.email }}
+					</span>
+                    <span>
+                        <button mat-button (click)="deleteItem(client.id)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </span>
+				</div>
+			</mat-list-item>
+		</mat-list>
+	</div>
+
+	<!-- Formulario para Añadir una Nueva Cita -->
+	<div class="add-client-form">
+		<h3 class="form-title">Add New client</h3>
+		<form [formGroup]="clientForm"
+			(ngSubmit)="onSubmit()">
+            <div>
+                <mat-form-field appearance="fill">
+                    <mat-label>Nombre</mat-label>
+                    <input matInput
+                        formControlName="name"
+                        type="string">
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field appearance="fill">
+                    <mat-label>Email</mat-label>
+                    <input matInput
+                        formControlName="email"
+                        type="email">
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field appearance="fill">
+                    <mat-label>Password</mat-label>
+                    <input matInput
+                        formControlName="password"
+                        type="password">
+                </mat-form-field>
+            </div>
+			<div>
+				<button [disabled]="clientForm.invalid"
+					mat-raised-button
+					color="primary"
+					type="submit">
+					Create client
+				</button>
+			</div>
+		</form>
+	</div>
+</div>

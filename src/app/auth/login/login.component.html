@@ -1,0 +1,40 @@
+<mat-card>
+	<mat-card-title>Inicio de Sesión</mat-card-title>
+	<form [formGroup]="loginForm"
+		(ngSubmit)="onSubmit()">
+		<ng-container *ngIf="_authFacade.error$ | async as error">
+			<div class="error">
+				{{ error }}
+			</div>
+		</ng-container>
+		<div>
+			<mat-form-field appearance="fill">
+				<mat-label>Usuario</mat-label>
+				<input matInput
+					formControlName="username"
+					required>
+			</mat-form-field>
+		</div>
+		<div>
+			<mat-form-field appearance="fill">
+				<mat-label>Contraseña</mat-label>
+				<input matInput
+					type="password"
+					formControlName="password"
+					required>
+			</mat-form-field>
+		</div>
+		<ng-container *ngIf="_authFacade.loading$ | async; else btnLogin">
+			<div>
+				<mat-spinner diameter="15"></mat-spinner>
+			</div>
+		</ng-container>
+		<ng-template #btnLogin>
+			<button mat-raised-button
+				color="primary"
+				type="submit">
+				Ingresar
+			</button>
+		</ng-template>
+	</form>
+</mat-card>
