@@ -12,6 +12,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { AuthService } from '../../store/user/services/auth.service';
 import { combineLatest, map } from 'rxjs';
 
+/**
+ * Componente para gestionar las citas.
+ * 
+ * Este componente permite visualizar una lista de citas y añadir nuevas citas.
+ */
 @Component({
   selector: 'app-appointments',
   standalone: true,
@@ -19,7 +24,6 @@ import { combineLatest, map } from 'rxjs';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-
     MatIconModule,
     MatSelectModule,
     MatInputModule,
@@ -29,10 +33,11 @@ import { combineLatest, map } from 'rxjs';
     MatProgressSpinnerModule
   ],
   templateUrl: './appointments.component.html',
-  styleUrl: './appointments.component.scss'
+  styleUrls: ['./appointments.component.scss']
 })
 export class AppointmentsComponent {
 
+  // Formulario reactivo para la gestión de citas.
   appointmentForm = new FormGroup({
     user_id: new FormControl('', [Validators.required]),
     barber_id: new FormControl('', [Validators.required]),
@@ -40,28 +45,39 @@ export class AppointmentsComponent {
     appointment_date: new FormControl('', [Validators.required]),
   });
 
+  // Listas para los clientes, barberos y servicios disponibles.
   clients: any[] = [];
   barbers: any[] = [];
   services: any[] = [];
 
   constructor(
-    public _appointmentsFacade: AppointmentsFacade,
-    private _auth: AuthService
+    public _appointmentsFacade: AppointmentsFacade, // Facade para la gestión de citas.
+    private _auth: AuthService // Servicio de autenticación para obtener datos adicionales.
   ) {
-    this._appointmentsFacade.loadAppointments();
-    this.loadData();
+    this._appointmentsFacade.loadAppointments(); // Carga inicial de citas.
+    this.loadData(); // Carga de datos de clientes, barberos y servicios.
   }
 
+  /**
+   * Método que maneja el envío del formulario.
+   * 
+   * Valida el formulario y, si es válido, añade una nueva cita y recarga la lista de citas.
+   */
   onSubmit() {
     if (this.appointmentForm.valid) {
       const { user_id, barber_id, service_id, appointment_date } = this.appointmentForm.value;
       this._appointmentsFacade.addAppointment({ user_id, barber_id, service_id, appointment_date });
       setTimeout(() => {
-        this._appointmentsFacade.loadAppointments();
+        this._appointmentsFacade.loadAppointments(); // Recarga la lista de citas después de añadir una nueva.
       }, 2000);
     }
   }
 
+  /**
+   * Método para cargar datos de barberos, clientes y servicios.
+   * 
+   * Combina las solicitudes de datos y actualiza las listas correspondientes.
+   */
   loadData() {
     combineLatest([
       this._auth.get('barber'),
@@ -70,9 +86,9 @@ export class AppointmentsComponent {
     ]).pipe(
       map(([b, c, services]: any) => ({ barbers: b.barbers, clients: c.clients, services }))
     ).subscribe(({ barbers, clients, services }) => {
-      this.barbers = barbers;
-      this.clients = clients;
-      this.services = services;
+      this.barbers = barbers; // Asigna la lista de barberos.
+      this.clients = clients; // Asigna la lista de clientes.
+      this.services = services; // Asigna la lista de servicios.
     });
   }
 }
